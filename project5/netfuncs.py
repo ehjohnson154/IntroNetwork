@@ -198,26 +198,28 @@ def find_router_for_ip(routers, ip):
 # Uncomment this code to have it run instead of the real main.
 # Be sure to comment it back out before you submit!
 
-# def my_tests():
-#     print("-------------------------------------")
-#     print("This is the result of my custom tests")
-#     print("-------------------------------------")
+def my_tests():
+    print("-------------------------------------")
+    print("This is the result of my custom tests")
+    print("-------------------------------------")
 
-#     #CONSIDER CHANGING TO ASSERT 
+    #CONSIDER CHANGING TO ASSERT 
+    print(ipv4_to_value("203.0.113.12 "))
+    #print(value_to_ipv4(3405804026))
 
-#     print(ipv4_to_value("198.51.100.10"))
-#     print(value_to_ipv4("3325256714"))
-#     print(get_subnet_mask_value("/16"))
-#     print(ips_same_subnet("10.23.121.17","10.23.121.225","/23"))
-#     print(ips_same_subnet("10.23.230.22","10.24.121.225","/16"))
-#     print("-------------------------------------")
-#     print("All subnet tests are true")
-#     print("-------------------------------------")
+    # print(ipv4_to_value("198.51.100.10"))
+    #print(value_to_ipv4(3325256714))
+    # print(get_subnet_mask_value("/16"))
+    # print(ips_same_subnet("10.23.121.17","10.23.121.225","/23"))
+    # print(ips_same_subnet("10.23.230.22","10.24.121.225","/16"))
+    # print("-------------------------------------")
+    # print("All subnet tests are true")
+    # print("-------------------------------------")
 
-#     print(get_network("0x01020304", "0xffffff00"))
+    # print(get_network("0x01020304", "0xffffff00"))
 
 
-#     # Add custom test code here
+    # Add custom test code here
 
 
 ## -------------------------------------------
