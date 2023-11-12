@@ -42,17 +42,12 @@ def value_to_ipv4(addr):
     return: "1.2.3.4"
     """
 
-    #convert addr to hex
-    #8 bits?   hex = int(addr).to_bytes(8, "big")
-    # = int(addr) #its already int but just to be safe
-
     pos1 = (addr >> 24) & 0xff
     pos2 = (addr >> 16) & 0xff
     pos3 = (addr >> 8) & 0xff
     pos4 = (addr >> 0) & 0xff
 
     ipv4 = f"{pos1}.{pos2}.{pos3}.{pos4}"
-    #   print(hex(addr))
     return ipv4
 
 def get_subnet_mask_value(slash):
@@ -78,13 +73,8 @@ def get_subnet_mask_value(slash):
     entry = slash.split("/")
  
     count = int(entry[1])
-    #print(count)
-    #for /subnet_value, return a run of 1's equal to the slash value
-    #see bitwise operation
-    #what is this doing exactly?
     subnet_val = (1 << count) - 1
     shift = (subnet_val << 32 - count)
-    #print(hex(shift))
 
 
     return shift
@@ -262,7 +252,6 @@ def dijkstras_shortest_path(routers, src_ip, dest_ip):
 #  Create an empty to_visit set. This is the set of all nodes we still need to visit.
     to_visit = set()
 #  Create a distance dictionary. For any given node (as a key), it will hold the distance from that node to the starting node
-    #??? Does this start empty ???#
     distance = {}
 # Create a parent dictionary. For any given node (as a key), 
 # it lists the key for the that leads back to the starting node (along the shortest path).
@@ -276,7 +265,6 @@ def dijkstras_shortest_path(routers, src_ip, dest_ip):
 
     #assuming each one has its key
     for x in routers:
-        #how to add x key in distance, parent, and to_visit?
 
         distance[x] = math.inf
         parent[x] = None
@@ -285,11 +273,6 @@ def dijkstras_shortest_path(routers, src_ip, dest_ip):
     #set initial node:
     distance[src_router] = 0
     
-    # print("TESTING INIT")
-    # print(distance)
-    # print(parent)
-    # print(to_visit)
-    # print ("END TESTING INIT")
     #iterate through keys to get routers
     #don't need to add connections
 
@@ -327,7 +310,6 @@ def dijkstras_shortest_path(routers, src_ip, dest_ip):
     #print(path)
     return(path)
     
-
 
 def find_current_node(visit, dist):
     node = None
