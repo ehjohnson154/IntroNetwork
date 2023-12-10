@@ -1,3 +1,5 @@
+#Note: Couldn't figure out buffer system in time. My apologies!
+
 import sys
 import socket
 import select
@@ -41,21 +43,26 @@ def decode_message(packet):
     decodedword = cutpacket.decode()
     return decodedword
 
-# def get_next_message(s, buffer_list):
-#     #checking to make sure we have a valid word packet
-#     if len(buffer_list[s]) >= 2: 
-#         encoded_word_length = packet_buffer[:2] 
-#         packet_length =  int.from_bytes(encoded_word_length, "big") + 2 #decode passed packet length
+def get_next_message(s):
+    #checking to make sure we have a valid word packet
+    if len(buffer_list[s]) >= 2: 
+        encoded_word_length = buffer_list[s][:2] 
+        packet_length =  int.from_bytes(encoded_word_length, "big") + 2 #decode passed packet length
 
-#         #check to ensure there is a full word packet in there
-#         if len(buffer_list[s]) >= (packet_length):
-#             word_packet = packet_buffer[:packet_length]#extract the packet data
-#             packet_buffer = packet_buffer[packet_length:]# strip the packet data off the front of the buffer
-#             return word_packet
+        #check to ensure there is a full word packet in there
+        if len(buffer_list[s]) >= (packet_length):
+            word_packet = buffer_list[s][:packet_length]#extract the packet data
+            buffer_list[s] = buffer_list[s][packet_length:]# strip the packet data off the front of the buffer
+            return word_packet
+        else: #insufficient data for next packet
+            return None
+    else:
+        return None
 
 
 #     pass
 name_list = {}
+buffer_list = {}
 
 def run_server(port):
 
@@ -84,32 +91,34 @@ def run_server(port):
                 new_connection, info = s.accept()
                 read_set.add(new_connection)
                 print(f'{info} connected...')
+                buffer_list[new_connection] = b''
 
             else:
                 data = s.recv(4096)
+                buffer_list[s] += data
+                encodedmessage = get_next_message(s)
                 if len(data) == 0:
                     disconnnectedmessage = f'***{name_list[s]} is disconnected...'
-                    #send_server_message("message", disconnnectedmessage, "server", s)
                     distribute_message(disconnnectedmessage, listen, listen, read_set)
                     print(disconnnectedmessage)
                     del(name_list[s])
+                    del(buffer_list[s])
                     read_set.remove(s)
 
-                else:
-                    message = decode_message(data)
+                if encodedmessage != None:
+                    #message = decode_message(data)
+                    message = decode_message(encodedmessage)
                     stuff = json.loads(message)
                     if stuff["type"] == "hello":
-
-                        #buffer_list[s] = []
                         name_list[s] = stuff["chat"]
                         connectedmessage = f'***{name_list[s]} is connected...'
-                        #send_server_message("message", connectedmessage, "server", s)
                         distribute_message(connectedmessage,listen, listen, read_set)
                         print(connectedmessage)
                         
                     else:
                         print(f'{name_list[s]}: {stuff["chat"]}')
                         distribute_message(stuff["chat"],listen, s, read_set)
+
 
 
 
