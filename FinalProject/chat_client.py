@@ -57,7 +57,11 @@ def recieving(socket):
             message = decode_message(data)
             stuff = json.loads(message)
             #print(f'{stuff["chat"]}')
-            print_message(f'***{stuff["chat"]}')
+            if stuff["name"] == "server":
+                print_message(f'{stuff["chat"]}')
+            else:
+                print_message(f'{stuff["name"]}: {stuff["chat"]}')
+            
         
 
 

@@ -5,9 +5,9 @@ import json
 
 PACKET_LEN_SIZE = 2
 
-def build_packet(type, words):
+def build_packet(type, words, name):
     final_packet = b''
-    data = {"type": type, "chat": words}
+    data = {"type": type, "chat": words, "name": name}
     packet = json.dumps(data)
     packet_bytes = packet.encode()
 
@@ -23,14 +23,17 @@ def send_data(stuff, socket):
     #string_bytes = string_to_send.encode()
     socket.send(stuff)
 
-def send_server_message(type, words, socket):
-    stuff = build_packet(type, words)
+def send_server_message(type, words, name, socket):
+    stuff = build_packet(type, words, name)
     send_data(stuff, socket)
 
 def distribute_message(message, listener, sender, set):
     for s in set:
         if s != sender and s != listener:
-            send_server_message("message", message, s)
+            if sender == listener:
+                send_server_message("message", message, "server", s)
+            else:
+                send_server_message("message", message, name_list[sender], s)
 
 
 def decode_message(packet):
@@ -52,7 +55,7 @@ def decode_message(packet):
 
 
 #     pass
-
+name_list = {}
 
 def run_server(port):
 
@@ -67,7 +70,7 @@ def run_server(port):
     
     read_set.add(listen)
 
-    name_list = {}
+    
     #buffer_list = {}
 
     # main loop:
@@ -86,8 +89,9 @@ def run_server(port):
                 data = s.recv(4096)
                 if len(data) == 0:
                     disconnnectedmessage = f'***{name_list[s]} is disconnected...'
-                    send_server_message("message", disconnnectedmessage, s)
-                    print(connectedmessage)
+                    #send_server_message("message", disconnnectedmessage, "server", s)
+                    distribute_message(disconnnectedmessage, listen, listen, read_set)
+                    print(disconnnectedmessage)
                     del(name_list[s])
                     read_set.remove(s)
 
@@ -99,7 +103,8 @@ def run_server(port):
                         #buffer_list[s] = []
                         name_list[s] = stuff["chat"]
                         connectedmessage = f'***{name_list[s]} is connected...'
-                        send_server_message("message", connectedmessage, s)
+                        #send_server_message("message", connectedmessage, "server", s)
+                        distribute_message(connectedmessage,listen, listen, read_set)
                         print(connectedmessage)
                         
                     else:
